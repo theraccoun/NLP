@@ -2,7 +2,7 @@ __author__ = 'theraccoun'
 
 INS_COST = 1
 DEL_COST = 1
-sub_cost = 2
+sub_cost = 1
 
 def computeMinNumberEdits(target, source):
     targLen = len(target)
@@ -32,7 +32,7 @@ def computeMinNumberEdits(target, source):
                 sub_cost = 0
                 print "same: " + target[i-1]
             else:
-                sub_cost = 2
+                sub_cost = 1
 
             print "ins: " , distance[i-1][j] + INS_COST
             print "sub: " , distance[i-1][j-1] + sub_cost
@@ -41,7 +41,6 @@ def computeMinNumberEdits(target, source):
             distance[i][j] = min(distance[i-1][j] + INS_COST,
                                 distance[i-1][j-1] + sub_cost,
                                 distance[i][j-1] + DEL_COST)
-            print "dist: " , distance
 
     return distance[targLen][sourceLen]
 
