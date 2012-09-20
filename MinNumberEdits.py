@@ -37,5 +37,8 @@ def computeMinNumberEdits(target, source):
 
     return distance[targLen][sourceLen]
 
+def computeWER(target, source):
+    return computeMinNumberEdits(target, source) / len(source)
+
 
 
