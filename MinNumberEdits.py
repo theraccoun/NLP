@@ -21,9 +21,6 @@ def computeMinNumberEdits(target, source):
     for j in range(1, sourceLen + 1):
         distance[0][j] = distance[0][j-1] + DEL_COST
 
-    print "second assign " , distance
-
-    print distance
 
     for i in range(1, targLen+1):
         for j in range(1, sourceLen+1):
@@ -33,10 +30,6 @@ def computeMinNumberEdits(target, source):
                 print "same: " + target[i-1]
             else:
                 sub_cost = 1
-
-            print "ins: " , distance[i-1][j] + INS_COST
-            print "sub: " , distance[i-1][j-1] + sub_cost
-            print "del: " , distance[i][j-1] + DEL_COST
 
             distance[i][j] = min(distance[i-1][j] + INS_COST,
                                 distance[i-1][j-1] + sub_cost,
