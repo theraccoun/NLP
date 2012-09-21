@@ -23,6 +23,7 @@ for i in range(NUMBER_OF_WORDS):
 lexImprover = LexiconImprover(lexicon)
 lexicon = lexImprover.improveLexicon()
 
+
 allHashTags = hashTagFile.readlines()
 
 
@@ -43,22 +44,47 @@ for key in sampleHashTagsWithAnswers:
 
 print sampleHashTags
 
-aHashTag = sampleHashTags[3]
-print aHashTag
-correctTag = sampleHashTagsWithAnswers.get('#' + aHashTag)
-print correctTag
+#aHashTag = sampleHashTags[3]
+#print aHashTag
+#correctTag = sampleHashTagsWithAnswers.get('#' + aHashTag)
+#print correctTag
 #matchTag = MaxMatch.maxMatch(aHashTag, lexicon)
-matchTag = MaxMatch.maxMatchImproved(aHashTag, lexicon)
+#matchTag = MaxMatch.maxMatchImproved(aHashTag, lexicon)
 
-print 'matchTag: ' , matchTag
-#target = ["puppy", "is", "walking"]
-#source = ["moose", "is", "jumping"]
+#MaxMatch.maxMatchAllTagsAndOutputToFile(sampleHashTags, lexicon, 'maccoun-out-assgn1.txt')
 
-source = matchTag
-target = correctTag
-print "target: " , target
+testFile = open('testSet.txt', 'r')
+testSet = []
+for line in testFile:
+    hashTagWithoutPound = line.replace('#', '')
+    hashTagWithoutPound = hashTagWithoutPound.lower()
+    testSet.append(hashTagWithoutPound)
 
-print MinNumberEdits.computeMinNumberEdits(source, target)
+testMaxMatch = MaxMatch.maxMatchAllTagsAndOutputToFile(testSet, lexicon, 'maccoun-out-assgn1.txt')
+print "testMaxMatch: " , testMaxMatch
+
+answers = [['london','2012'],
+            ['switch','to','chrome'],
+            ['iphone5'],
+            ['team', 'gb'],
+            ['47','percent'],
+            ['nbc','fail'],
+            ['art','of','letter','writing','is','almost','lost'],
+            ['conspiracy','theories','for','breakfast'],
+            ['doctors', 'without','borders'],
+            ['iran'], ['election'],
+            ['tomorrows'],['news'],['today'],
+            ['its','the','thought','that','counts'],
+            ['yankees','get','another','call'],
+            ['someone','dropped','the','ball'],
+            ['missed','opportunities'],
+            ['earthquake','in','haiti'],
+            ['loveland','ski','area'],
+            ['bmw','championship'],
+            ['deforestation'],
+            ['pumpkin','chocolate','chip','cookie','recipe']]
+
+#print MinNumberEdits.computeMinNumberEdits(source, target)
 
 
 
