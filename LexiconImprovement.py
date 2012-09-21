@@ -1,8 +1,10 @@
 __author__ = 'theraccoun'
 
+import re
+
 class LexiconImprover:
 
-    validOneLetterWords = ['a']
+    validOneLetterWords = ['a', 'i']
 
     validTwoLetterWords = ['am', 'as',  'at', 'be', 'he', 'hi', 'if', 'in', 'is',  'it', 'me', 'my', 'of', 'on', 'or','to', 'us', 'we', 'yo']
 
@@ -19,18 +21,16 @@ class LexiconImprover:
 
     def checkIfValidWord(self, word):
 
-        isValidWord = True
-
         if len(word) == 1 and not self.validOneLetterWords.__contains__(word):
-            isValidWord = False
+            return False
         if len(word) == 2 and not self.validTwoLetterWords.__contains__(word):
-            isValidWord = False
-        if len(word) == 3 and not self.validThreeLetterWords.__contains__(word):
-            isValidWord = False
+            return False
+#        if len(word) == 3 and not self.validThreeLetterWords.__contains__(word):
+#            return False
 #        if len(word) == 4 and not self.validFourLetterWords.__contains__(word):
 #            isValidWord = False
 
-        return isValidWord
+        return True
 
     def improveLexicon(self):
 

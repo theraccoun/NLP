@@ -3,6 +3,7 @@ __author__ = 'theraccoun'
 import MaxMatch
 import MinNumberEdits
 from LexiconImprovement import LexiconImprover
+import re
 
 
 hashTagFile = open('hashtags-dev.txt', 'r')
@@ -19,10 +20,11 @@ for i in range(NUMBER_OF_WORDS):
     if len(wordOnly) >= 1:
         lexicon.append(wordOnly)
 
+
+
 #improve the lexicon by removing infrequent words that are relatively few letters in length
 lexImprover = LexiconImprover(lexicon)
 lexicon = lexImprover.improveLexicon()
-
 
 allHashTags = hashTagFile.readlines()
 
@@ -57,23 +59,24 @@ testFile = open('testSet.txt', 'r')
 testSet = []
 for line in testFile:
     hashTagWithoutPound = line.replace('#', '')
-    hashTagWithoutPound = hashTagWithoutPound.lower()
-    testSet.append(hashTagWithoutPound)
+    correctHashTag = hashTagWithoutPound.replace('\n', '')
+    correctHashTag = correctHashTag.lower()
+    testSet.append(correctHashTag)
 
 testMaxMatch = MaxMatch.maxMatchAllTagsAndOutputToFile(testSet, lexicon, 'maccoun-out-assgn1.txt')
 print "testMaxMatch: " , testMaxMatch
 
 answers = [['london','2012'],
             ['switch','to','chrome'],
-            ['iphone5'],
+            ['iphone', '5'],
             ['team', 'gb'],
             ['47','percent'],
             ['nbc','fail'],
             ['art','of','letter','writing','is','almost','lost'],
             ['conspiracy','theories','for','breakfast'],
             ['doctors', 'without','borders'],
-            ['iran'], ['election'],
-            ['tomorrows'],['news'],['today'],
+            ['iran','election'],
+            ['tomorrows','news','today'],
             ['its','the','thought','that','counts'],
             ['yankees','get','another','call'],
             ['someone','dropped','the','ball'],
@@ -83,6 +86,9 @@ answers = [['london','2012'],
             ['bmw','championship'],
             ['deforestation'],
             ['pumpkin','chocolate','chip','cookie','recipe']]
+
+
+MinNumberEdits.computeAllWER(answers, testMaxMatch)
 
 #print MinNumberEdits.computeMinNumberEdits(source, target)
 

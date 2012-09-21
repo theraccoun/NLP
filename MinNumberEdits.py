@@ -38,7 +38,40 @@ def computeMinNumberEdits(target, source):
     return distance[targLen][sourceLen]
 
 def computeWER(target, source):
-    return computeMinNumberEdits(target, source) / len(source)
+    return float(computeMinNumberEdits(target, source))/float(len(target))
+
+def computeAllWER(targetList, sourceList):
+    statFile = open('werStats.txt', 'w')
+    allWER = []
+    print "source: " , sourceList
+    print "target: " , targetList
+    if len(targetList) != len(sourceList):
+        print len(targetList), len(sourceList)
+        return
+    for i in range(len(targetList)):
+        my_output = sourceList[i]
+        target = targetList[i]
+        wer = computeWER(target, my_output)
+        allWER.append(wer)
+        print "********************\n Answer: " , target , "\n myOutput: " , my_output , "\n wer: " , str(wer), "\n ***********************"
+        targetString = ""
+        for t in target:
+            targetString += t + " "
+        print "targSTring: " + targetString
+        outputString = ""
+        for o in my_output:
+            outputString += o + " "
+        line = "Answer: " + targetString + "\nOutput: " + outputString + "\n WER: " + str(wer) + "\n----------------------------------\n"
+        statFile.write(line)
+
+    sumAllWER = 0
+    for w in allWER:
+        sumAllWER += w
+    print sumAllWER
+    print len(allWER)
+    averageWER = float(sumAllWER)/float(len(allWER))
+    print "AVERAGE WER: " , averageWER
+    statFile.write("\n**********************\n Average WER = " + str(averageWER) + "\n**************************\n")
 
 
 
