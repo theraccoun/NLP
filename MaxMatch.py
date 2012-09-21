@@ -1,3 +1,5 @@
+from LexiconImprovement import LexiconImprover
+
 __author__ = 'theraccoun'
 
 import re
@@ -50,6 +52,8 @@ def maxMatchImproved(inputString, dictRef):
         if len(word) >= 4:
             num_words_long_four_in_backward += 1
 
+
+
     if forward_first_last != backward_first_last:
         if forward_first_last > backward_first_last:
             return forward
@@ -60,6 +64,8 @@ def maxMatchImproved(inputString, dictRef):
         return forward
     else:
         return backward
+
+
 
 
 def runMaxMatchForward(inputString, dictRef):
@@ -169,15 +175,8 @@ def convertListOfCharToString(list):
         st += char
     return st
 
-def flipWord(word):
-    flipped = ""
-    for i in range(len(word)):
-        flipped += word[len(word) - i - 1]
 
-    return flipped
-
-
-def maxMatchAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
+def maxMatchImprovedAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
 
     fo = open(outFileName, 'w')
 
@@ -193,6 +192,25 @@ def maxMatchAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
         fo.write(outLine + "\n")
 
     return answersInListForm
+
+def maxMatchAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
+
+    fo = open(outFileName, 'w')
+
+    answersInListForm = []
+
+    for hashTag in listOFHashTags:
+        maxMatchList = maxMatch(hashTag, dictRef)
+        answersInListForm.append(maxMatchList)
+        outLine = ""
+        for word in maxMatchList:
+            outLine += word + " "
+
+        fo.write(outLine + "\n")
+
+    return answersInListForm
+
+
 
 
 
