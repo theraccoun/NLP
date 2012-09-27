@@ -5,21 +5,130 @@ __author__ = 'theraccoun'
 import re
 
 def maxMatch(inputString, dictRef):
-    possibleWord = ''
-    maxMatchedString = []
 
-    for letter in inputString:
-        possibleWord += letter
+    pointerPos = 0
+    maxMatchTuple = []
 
-        if dictRef.__contains__(possibleWord):
-            maxMatchedString.append(possibleWord)
-            possibleWord = ''
+    while pointerPos < len(inputString):
+        longestWordInfo = findLongestWordFromPointerPos(inputString, pointerPos, dictRef, True)
+        maxMatchTuple.append(longestWordInfo.get('longest_word'))
+        pointerPos = longestWordInfo.get('pointer_pos')
 
-    return maxMatchedString
+    return maxMatchTuple
+
+def findLongestWordFromPointerPos(string, pointerPos, dictRef, is_forward):
+    longestWord = ""
+    possibleWord = ""
+    i = pointerPos
+    if is_forward:
+        while i < len(string):
+            possibleWord += string[i]
+            i += 1
+
+            if possibleWord.isdigit():
+                pointerPos = i
+                return {'longest_word' : possibleWord, 'pointer_pos' : pointerPos}
+
+            if dictRef.__contains__(possibleWord):
+                longestWord = possibleWord
+                pointerPos = i
+
+            if longestWord == "" and i == len(string):
+                pointerPos = i
+                longestWord = possibleWord
+    else:
+        backwardWord = ""
+        while i >= 0:
+            backwardWord += string[i]
+            possibleWord = ""
+            for z in range(len(backwardWord)):
+                possibleWord += backwardWord[(len(backwardWord) - 1) - z]
+            i -= 1
+
+            if possibleWord.isdigit():
+                pointerPos = i
+                return {'longest_word' : possibleWord, 'pointer_pos' : pointerPos}
+
+            if dictRef.__contains__(possibleWord):
+                longestWord = possibleWord
+                pointerPos = i
+
+            if longestWord == "" and i == len(string):
+                pointerPos = i
+                longestWord = possibleWord
+
+    return {'longest_word' : longestWord, 'pointer_pos' : pointerPos}
+
+def maxMatchImprovedForward(inputString, dictRef):
+
+    pointerPos = 0
+    maxMatchTuple = []
+
+    while pointerPos < len(inputString):
+        if inputString[pointerPos].isdigit():
+            longestWordInfo = computeLongestNumAndUpdatePointer(inputString, pointerPos, True)
+            maxMatchTuple.append(longestWordInfo.get('longest_num'))
+            pointerPos = longestWordInfo.get('pointer_pos')
+        else:
+            longestWordInfo = findLongestWordFromPointerPos(inputString, pointerPos, dictRef, True)
+            maxMatchTuple.append(longestWordInfo.get('longest_word'))
+            pointerPos = longestWordInfo.get('pointer_pos')
+
+    return maxMatchTuple
+
+def maxMatchImprovedBackward(inputString, dictRef):
+
+    pointerPos = len(inputString) - 1
+    backwardMatch = []
+
+    while pointerPos >= 0:
+        if inputString[pointerPos].isdigit():
+            longestWordInfo = computeLongestNumAndUpdatePointer(inputString, pointerPos, False)
+            backwardMatch.append(longestWordInfo.get('longest_num'))
+            pointerPos = longestWordInfo.get('pointer_pos')
+        else:
+            longestWordInfo = findLongestWordFromPointerPos(inputString, pointerPos, dictRef, False)
+            backwardMatch.append(longestWordInfo.get('longest_word'))
+            pointerPos = longestWordInfo.get('pointer_pos')
+
+    maxMatchTuple = []
+    for z in range(len(backwardMatch)):
+         maxMatchTuple.append(backwardMatch[len(backwardMatch) - 1 - z])
+    return maxMatchTuple
+
+def computeLongestNumAndUpdatePointer(inputString, pointerPos, is_forward):
+    isNum = True
+    possibleNum = ""
+    i = pointerPos
+
+    if is_forward:
+        while isNum and i < len(inputString):
+            curChar = inputString[i]
+            i += 1
+            if curChar.isdigit():
+                possibleNum += curChar
+                pointerPos = i
+                isNum = True
+    else:
+        backwardNum = ""
+        while isNum and i >= 0:
+            curChar = inputString[i]
+            i -= 1
+            if curChar.isdigit():
+                backwardNum += curChar
+                pointerPos = i
+                isNum = True
+
+        for z in range(len(backwardNum)):
+            possibleNum += backwardNum[len(backwardNum) - 1 - z]
+
+    return {'longest_num' : possibleNum , 'pointer_pos' : pointerPos}
+
+
 
 def maxMatchImproved(inputString, dictRef):
-    backward = runMaxMatchBackward(inputString, dictRef)
-    forward = runMaxMatchForward(inputString, dictRef)
+    backward = maxMatchImprovedForward(inputString, dictRef)
+    forward = maxMatchImprovedBackward(inputString, dictRef)
 
     longestBack = 0
     for string in backward:
@@ -68,7 +177,7 @@ def maxMatchImproved(inputString, dictRef):
 
 
 
-def runMaxMatchForward(inputString, dictRef):
+def runMaxMatchImprovedForward(inputString, dictRef):
     # If the entire hashTag is found in the dictionary, that's probably it, so just return it
     possibleWord = ''
     maxMatchedString = []
@@ -122,7 +231,8 @@ def runMaxMatchForward(inputString, dictRef):
         maxMatchedString = [inputString.rstrip()]
     return maxMatchedString
 
-def runMaxMatchBackward(inputString, dictRef):
+
+def runMaxMatchImprovedBackward(inputString, dictRef):
     # If the entire hashTag is found in the dictionary, that's probably it, so just return it
     possibleWord = []
     maxMatchedString = []
@@ -191,6 +301,8 @@ def maxMatchImprovedAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName)
 
         fo.write(outLine + "\n")
 
+    fo.close()
+
     return answersInListForm
 
 def maxMatchAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
@@ -207,6 +319,8 @@ def maxMatchAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
             outLine += word + " "
 
         fo.write(outLine + "\n")
+
+    fo.close()
 
     return answersInListForm
 
