@@ -12,12 +12,10 @@ def computeMinNumberEdits(target, source):
 
 # Initizialize a 2d array
     distance = [[0 for y in range(sourceLen + 1)] for x in range(targLen+1)]
-    print "dist = " + str(len(distance[0]))
     distance[0][0] = 0
 
     for i in range(1, targLen+1):
         distance[i][0] = distance[i-1][0] + INS_COST
-    print "first assign: " , distance
     for j in range(1, sourceLen + 1):
         distance[0][j] = distance[0][j-1] + DEL_COST
 
@@ -27,7 +25,6 @@ def computeMinNumberEdits(target, source):
 
             if target[i-1] == source[j-1]:
                 sub_cost = 0
-                print "same: " + target[i-1]
             else:
                 sub_cost = 1
 
@@ -40,14 +37,40 @@ def computeMinNumberEdits(target, source):
 def computeWER(target, source):
     return float(computeMinNumberEdits(target, source))/float(len(target))
 
-def computeAllWER(targetList, sourceList):
-    statFile = open('werStats.txt', 'w')
-    allWER = []
-    print "source: " , sourceList
-    print "target: " , targetList
+def computeAllWER(target, source, outputName):
+
+    targetList = []
+    sourceList = []
+
+    if type(target) == file:
+        for line in target:
+            line = line.replace("\n", "")
+            line = line.split(" ")
+            targetList.append(line)
+        for item in targetList:
+            print item
+    elif type(target) == list:
+        targetList = target
+    else:
+        print "Target must be a list or a file"
+        return
+
+    if type(source) == file:
+        sourceList = [line.split(" ") for line in source]
+    elif type(source) == list:
+        sourceList = source
+    else:
+        print "Source must be a list or a file"
+        return
+
+
+    statFile = open(outputName, 'w')
     if len(targetList) != len(sourceList):
         print len(targetList), len(sourceList)
+        print "Must have matching number of lines of source and target lists!"
         return
+
+    allWER = []
     for i in range(len(targetList)):
         my_output = sourceList[i]
         target = targetList[i]
