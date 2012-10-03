@@ -177,107 +177,6 @@ def maxMatchImproved(inputString, dictRef):
 
 
 
-def runMaxMatchImprovedForward(inputString, dictRef):
-    # If the entire hashTag is found in the dictionary, that's probably it, so just return it
-    possibleWord = ''
-    maxMatchedString = []
-
-    at_end_of_input_string = False
-    curPointer = 0
-    while not at_end_of_input_string:
-        if curPointer > len(inputString) - 1:
-            break
-        curLetter = inputString[curPointer]
-
-        #Check if letter is a number
-        reg = re.compile('[0-9]')
-        if reg.match(curLetter):
-            possibleWord += curLetter
-            if curPointer + 1 < len(inputString):
-                next_char = inputString[curPointer+1]
-                if not reg.match(inputString[curPointer+1]):
-                    maxMatchedString.append(possibleWord)
-                    possibleWord = ''
-            else:
-                maxMatchedString.append(possibleWord)
-                possibleWord = ''
-                break
-        else:
-            possibleWord += curLetter
-            if dictRef.__contains__(possibleWord):
-                #look ahead to end of string to see if a slightly longer word can be matched
-                #if so, it's the more likely word.
-                another_possibility = possibleWord
-                curIndex = curPointer
-                dist_to_end_of_string = len(inputString) - curPointer
-                for z in range(1, dist_to_end_of_string):
-                    lookAhead = curIndex + z
-                    another_possibility += inputString[lookAhead]
-                    if dictRef.__contains__(another_possibility):
-                        possibleWord = another_possibility
-                        curPointer = curIndex + z
-
-
-                maxMatchedString.append(possibleWord)
-                possibleWord = ''
-            else:
-                if curPointer == len(inputString) - 1:
-                    maxMatchedString.append(possibleWord)
-                    break
-
-        curPointer += 1
-
-    if len(maxMatchedString) == 0:
-        maxMatchedString = [inputString.rstrip()]
-    return maxMatchedString
-
-
-def runMaxMatchImprovedBackward(inputString, dictRef):
-    # If the entire hashTag is found in the dictionary, that's probably it, so just return it
-    possibleWord = []
-    maxMatchedString = []
-
-    behind_beginning_of_string = False
-    curPointer = len(inputString) - 1
-    while not behind_beginning_of_string:
-        if curPointer < 0:
-            break
-        curLetter = inputString[curPointer]
-
-        #Check if letter is a number
-        reg = re.compile('[0-9]')
-        if reg.match(curLetter):
-            possibleWord.insert(0, curLetter)
-            if curPointer - 1 > 0:
-                if not reg.match(inputString[curPointer-1]):
-                    maxMatchedString.insert(0, convertListOfCharToString(possibleWord))
-                    possibleWord = []
-            else:
-                break
-        else:
-            possibleWord.insert(0, curLetter)
-            if dictRef.__contains__(convertListOfCharToString(possibleWord)):
-                #look ahead to end of string to see if a slightly longer word can be matched
-                #if so, it's the more likely word.
-                another_possibility = [y for y in possibleWord]
-                dist_to_end_of_string = curPointer
-                curIndex = curPointer
-                pointerTracker = curPointer
-                for z in range(1, dist_to_end_of_string + 1):
-                    another_possibility.insert(0, inputString[curIndex - z])
-                    if dictRef.__contains__(convertListOfCharToString(another_possibility)):
-                        possibleWord = [x for x in another_possibility]
-                        pointerTracker = curPointer - z
-
-                curPointer = pointerTracker
-                maxMatchedString.insert(0, convertListOfCharToString(possibleWord))
-                possibleWord = []
-
-        curPointer -= 1
-
-    if len(maxMatchedString) == 0:
-        maxMatchedString = [inputString.rstrip()]
-    return maxMatchedString
 
 def convertListOfCharToString(list):
     st = ''
@@ -286,13 +185,25 @@ def convertListOfCharToString(list):
     return st
 
 
-def maxMatchImprovedAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
+def maxMatchImprovedAllTagsAndOutputToFile(hashTags, dictRef, outFileName):
 
     fo = open(outFileName, 'w')
 
     answersInListForm = []
+    listOfHashTags = []
 
-    for hashTag in listOFHashTags:
+    if type(hashTags) == file:
+        for line in hashTags:
+            hashTagWithoutPound = line.replace('#', '')
+            correctHashTag = hashTagWithoutPound.replace('\n', '')
+            correctHashTag = correctHashTag.lower()
+            listOfHashTags.append(correctHashTag)
+    elif type(hashTags) == list:
+        listOfHashTags = hashTags
+    else:
+        print "unrecognized file type!"
+
+    for hashTag in listOfHashTags:
         maxMatchList = maxMatchImproved(hashTag, dictRef)
         answersInListForm.append(maxMatchList)
         outLine = ""
@@ -304,6 +215,7 @@ def maxMatchImprovedAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName)
     fo.close()
 
     return answersInListForm
+
 
 def maxMatchAllTagsAndOutputToFile(listOFHashTags, dictRef, outFileName):
 
